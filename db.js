@@ -1,6 +1,8 @@
 const sqlite3 = require('sqlite3').verbose();
+const { rejects } = require('assert');
 const fs = require('fs');
-async function copyFile(sourcePath, destinationPath) {
+const { resolve } = require('path');
+const copyFile = async(sourcePath, destinationPath) => {
   try {
     await new Promise((resolve, reject) => {
       fs.copyFile(sourcePath, destinationPath, (err) => {
@@ -16,33 +18,62 @@ async function copyFile(sourcePath, destinationPath) {
     console.error('Error:', err);
   }
 }
-const initProgress = async () => {
-  // Usage example
-  await copyFile('sqlite3/dictionary.db', 'progress/progress.db').then(() => {
-    const sqlite3 = require('sqlite3').verbose();
-    const db = new sqlite3.Database('progress/progress.db');
-    const col1 = 'ALTER TABLE entries ADD COLUMN updated_at DATETIME NULL';
-    const col2 = 'ALTER TABLE entries ADD COLUMN status INTEGER CHECK (status BETWEEN 0 AND 9)';
-    db.run(col1, (err) => {
-      if (err) {
-        console.error('Error adding columns:', err);
-      } else {
-        db.run(col2, (err) => {
-          if (err) {
-            console.error('Error adding columns:', err);
-          } else {
-            console.log("Completed");
-            db.close();
-          }
-        });
-      }
+const dbCommand = async (db, command, silent=false) => {
+  try {
+    await new Promise( async (resolve, reject) => {
+      await db.run(command, (err) => {
+        if(err) {
+          if(!silent)
+          console.log(err); 
+          reject("DB command failed!");
+        }
+        else {
+          if(!silent)
+          console.log(command + "--> Success ✅");
+          resolve();
+        }
+      });
     });
-
-      // Close the database
-    })
-    .catch((err) => {
-      console.error('Error:', err);
-    });
+  } catch (err) {
+    console.error('Error:', err);
+  }
 }
 
-initProgress();
+const query = async (db, query) => {
+  try {
+    await new Promise( async (resolve, reject) => {
+      await db.all(query, (err, results) => {
+        if(err) {
+          reject(err);
+        }
+        else {
+          resolve(results);
+        }
+      });
+    });
+  } catch (err) {
+    console.error('Error:', err);
+  }
+}
+const initProgress = async () => {
+  const sqlite3 = require('sqlite3').verbose();
+  await copyFile("sqlite3/dictionary.db", "progress/database.db");
+  const db = new sqlite3.Database('progress/database.db');
+  // Progress DB initalization
+  await dbCommand(db, `
+    CREATE TABLE IF NOT EXISTS words (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      updated_at DATETIME NULL,
+      status INTEGER CHECK (status BETWEEN 0 AND 9),
+      word varchar(25) NULL,
+      wordtype varchar(20) NULL,
+      definition text NULL 
+    )
+  `);
+await dbCommand(db, `INSERT INTO words (word, wordtype, definition)
+    SELECT entries.word, entries.wordtype, entries.definition
+    FROM entries`);
+}
+module.exports = {
+  initProgress, dbCommand,
+};
