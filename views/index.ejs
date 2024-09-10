@@ -30,20 +30,24 @@
             <div class="card-body">
               <h5 class="card-title"><b class="word-b">Card Title</b>
               <button type="button" class="btn btn-primary showIt"><i class="fa-solid fa-arrow-down-long"></i></button>
+              <input type="hidden" id="QuestionId" />
               </h5>
+              <a href="javascript:void();" class="translateGoogle" target="_blank">
+                <i class="fa-brands fa-google"></i>
+              </a>
               <p class="card-text word-d collapse"></p>   
             </div>
             <div class="card-footer text-center">
-              <button type="button" class="btn btn-danger">   1</button>
-              <button type="button" class="btn btn-danger">   2</button>
-              <button type="button" class="btn btn-info">   3</button>
-              <button type="button" class="btn btn-info">   4</button>
-              <button type="button" class="btn btn-primary">   5</button>
-              <button type="button" class="btn btn-primary">   6</button>
-              <button type="button" class="btn btn-primary">   7</button>
-              <button type="button" class="btn btn-primary">   8</button>
-              <button type="button" class="btn btn-success">   9</button>
-              <button type="button" class="btn btn-success">   10</button>
+              <button type="button" onclick="processQuestion(0);" class="btn btn-danger">   0</button>
+              <button type="button" onclick="processQuestion(1);" class="btn btn-danger">   1</button>
+              <button type="button" onclick="processQuestion(2);" class="btn btn-info">   2</button>
+              <button type="button" onclick="processQuestion(3);" class="btn btn-info">   3</button>
+              <button type="button" onclick="processQuestion(4);" class="btn btn-primary">   4</button>
+              <button type="button" onclick="processQuestion(5);" class="btn btn-primary">   5</button>
+              <button type="button" onclick="processQuestion(6);" class="btn btn-primary">   6</button>
+              <button type="button" onclick="processQuestion(7);" class="btn btn-primary">   7</button>
+              <button type="button" onclick="processQuestion(8);" class="btn btn-success">   8</button>
+              <button type="button" onclick="processQuestion(9);" class="btn btn-success">   9</button>
             </div>
           </div>
         </div>
