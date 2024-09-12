@@ -36,6 +36,7 @@ app.get('/',  async (req, res) => {
   res.render('index', {wordsCount:countAll.count});
 });
 
+
 app.post("/processQuestion",  async (req, res) => {
   await dbOps.dbCommand(db, `UPDATE words SET status=${req.body.score}, updated_at=${Date.now()} where id = ${req.body.id}`).then(()=>{
     res.send("success!");
