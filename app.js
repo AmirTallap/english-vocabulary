@@ -1,11 +1,15 @@
 const express = require('express');
 
+require('dotenv').config();
+
+
 const path = require('path');
 const fs = require('fs');
 const app = express();
 app.use(express.json()); // Parse JSON data
 app.use(express.urlencoded({ extended: false }))
-const port = 3000;
+const appPORT = process.env.APP_PORT;
+
 
 //Checking if progress file exists!
 const sqlite3 = require('sqlite3').verbose();
@@ -23,6 +27,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Route to render the index.ejs
 const db = new sqlite3.Database('progress/database.db');
+
+const appFOR = process.env.APP_FOR;
+
 app.get('/',  async (req, res) => {
   const countAll = await dbOps.squery(db, 'SELECT count(*) as count FROM words;');
   const status = await dbOps.query(db, 'SELECT DISTINCT status from words;');
@@ -33,9 +40,9 @@ app.get('/',  async (req, res) => {
   //       statusArr.push(x);
   //     }
   // }); 
-  res.render('index', {wordsCount:countAll.count});
+  res.render('index', {wordsCount:countAll.count, appFOR:appFOR});
 });
-
+ 
 app.post("/processQuestion",  async (req, res) => {
   await dbOps.dbCommand(db, `UPDATE words SET status=${req.body.score}, updated_at=${Date.now()} where id = ${req.body.id}`).then(()=>{
     res.send("success!");
@@ -48,6 +55,6 @@ app.post("/getRandomQuestion", (req, res)=>{
   });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(appPORT, () => {
+  console.log(`Server is running on http://localhost:${appPORT}`);
 });
