@@ -38,10 +38,26 @@ const dbCommand = async (db, command, silent=false) => {
     console.error('Error:', err);
   }
 }
-
+const squery = async (db, query) => {
+  try {
+    return new Promise( async (resolve, reject)=>{
+      await db.get(query, (err, results) => {
+        if(err) {
+          reject(err);
+        }
+        else {
+          resolve(results);
+        }
+      });
+    });
+  } catch (err) {
+    console.error('Error:', err);
+  }
+  
+}
 const query = async (db, query) => {
   try {
-    await new Promise( async (resolve, reject) => {
+    return new Promise( async (resolve, reject)=>{
       await db.all(query, (err, results) => {
         if(err) {
           reject(err);
@@ -75,5 +91,5 @@ await dbCommand(db, `INSERT INTO words (word, wordtype, definition)
     FROM entries`);
 }
 module.exports = {
-  initProgress, dbCommand,
+  initProgress, dbCommand, query, squery
 };

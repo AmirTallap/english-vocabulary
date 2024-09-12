@@ -23,10 +23,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Route to render the index.ejs
 const db = new sqlite3.Database('progress/database.db');
-app.get('/',  (req, res) => {
-   db.all('SELECT count(*) as count FROM entries', (err, rows) => {
-     res.render('index', {wordsCount:rows[0].count});
-  });
+app.get('/',  async (req, res) => {
+  const countAll = await dbOps.squery(db, 'SELECT count(*) as count FROM words;');
+  const status = await dbOps.query(db, 'SELECT DISTINCT status from words;');
+  let statusArr = [];
+  // status.forEach(async i => {
+  //     if(i.status){
+  //       const x = (await dbOps.squery(db, `SELECT count(*) as count FROM words where status = ${i.status};`)).count;
+  //       statusArr.push(x);
+  //     }
+  // }); 
+  res.render('index', {wordsCount:countAll.count});
 });
 
 app.post("/processQuestion",  async (req, res) => {
