@@ -1,3 +1,4 @@
+[#] #Hacktoberfest
 # Open-Source English Dictionary
 
 An open source English language dictionary with 176,023 definitions. 
